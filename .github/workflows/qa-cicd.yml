@@ -19,6 +19,7 @@ permissions:
 
 env:
   NODE_VERSION: "22"
+  DOCKER_BASE_IMAGE: node:26-alpine
 
 jobs:
   gitleaks-scan:
@@ -401,32 +402,43 @@ jobs:
     needs:
       - client-build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - service: frontend
-            context: apps/frontend
-          - service: user-service
-            context: services/user-service
-          - service: product-service
-            context: services/product-service
-          - service: order-service
-            context: services/order-service
-          - service: payment-service
-            context: services/payment-service
-          - service: notification-service
-            context: services/notification-service
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v7
 
-      - name: Build image
+      - name: Warm Docker base image
         run: |
-          docker build \
-            -t "devsecops-commerce-${{ matrix.service }}:${{ github.sha }}" \
-            "${{ matrix.context }}"
+          for attempt in 1 2 3 4 5; do
+            if docker pull "${DOCKER_BASE_IMAGE}"; then
+              exit 0
+            fi
+
+            sleep "$((attempt * 10))"
+          done
+
+          exit 1
+
+      - name: Build images
+        run: |
+          images=(
+            "frontend=apps/frontend"
+            "user-service=services/user-service"
+            "product-service=services/product-service"
+            "order-service=services/order-service"
+            "payment-service=services/payment-service"
+            "notification-service=services/notification-service"
+          )
+
+          for item in "${images[@]}"; do
+            service="${item%%=*}"
+            context="${item#*=}"
+
+            docker build \
+              --pull=false \
+              -t "devsecops-commerce-${service}:${{ github.sha }}" \
+              "${context}"
+          done
 
       - name: Install Trivy
         uses: aquasecurity/setup-trivy@v0.3.1
@@ -436,46 +448,79 @@ jobs:
 
       - name: Run Trivy image scan (JSON)
         run: |
-          trivy image "devsecops-commerce-${{ matrix.service }}:${{ github.sha }}" \
-            --format json \
-            --output image-trivy-${{ matrix.service }}-report.json \
-            --severity HIGH,CRITICAL \
-            --ignore-unfixed \
-            --exit-code 0
+          services=(
+            frontend
+            user-service
+            product-service
+            order-service
+            payment-service
+            notification-service
+          )
+
+          for service in "${services[@]}"; do
+            trivy image "devsecops-commerce-${service}:${{ github.sha }}" \
+              --format json \
+              --output "image-trivy-${service}-report.json" \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 0
+          done
 
       - name: Run Trivy image scan (TABLE)
         run: |
-          trivy image "devsecops-commerce-${{ matrix.service }}:${{ github.sha }}" \
-            --format table \
-            --severity HIGH,CRITICAL \
-            --ignore-unfixed \
-            --exit-code 0 > image-trivy-${{ matrix.service }}-report.txt
+          services=(
+            frontend
+            user-service
+            product-service
+            order-service
+            payment-service
+            notification-service
+          )
+
+          for service in "${services[@]}"; do
+            trivy image "devsecops-commerce-${service}:${{ github.sha }}" \
+              --format table \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 0 > "image-trivy-${service}-report.txt"
+          done
 
       - name: Generate image SBOM
         run: |
-          trivy image "devsecops-commerce-${{ matrix.service }}:${{ github.sha }}" \
-            --format spdx-json \
-            --output image-sbom-${{ matrix.service }}.spdx.json
+          services=(
+            frontend
+            user-service
+            product-service
+            order-service
+            payment-service
+            notification-service
+          )
+
+          for service in "${services[@]}"; do
+            trivy image "devsecops-commerce-${service}:${{ github.sha }}" \
+              --format spdx-json \
+              --output "image-sbom-${service}.spdx.json"
+          done
 
       - name: Upload Trivy image JSON report
         uses: actions/upload-artifact@v7
         with:
-          name: image-trivy-${{ matrix.service }}-json-report
-          path: image-trivy-${{ matrix.service }}-report.json
+          name: image-trivy-json-reports
+          path: image-trivy-*-report.json
           if-no-files-found: warn
 
       - name: Upload Trivy image TABLE report
         uses: actions/upload-artifact@v7
         with:
-          name: image-trivy-${{ matrix.service }}-table-report
-          path: image-trivy-${{ matrix.service }}-report.txt
+          name: image-trivy-table-reports
+          path: image-trivy-*-report.txt
           if-no-files-found: warn
 
       - name: Upload image SBOM
         uses: actions/upload-artifact@v7
         with:
-          name: image-sbom-${{ matrix.service }}
-          path: image-sbom-${{ matrix.service }}.spdx.json
+          name: image-sbom-reports
+          path: image-sbom-*.spdx.json
           if-no-files-found: error
 
   portfolio-readiness:
