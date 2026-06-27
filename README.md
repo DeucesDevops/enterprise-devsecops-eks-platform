@@ -53,8 +53,6 @@ See:
 - [Phase 1.5 App MVP Verification](docs/phase-1-5-app-mvp-verification.md)
 - [Branching Strategy](docs/branching-strategy.md)
 - [Phase 1 Local Verification](docs/phase-1-local-verification.md)
-- [Dependabot](docs/dependabot.md)
-- [Dependabot Review Log](docs/dependabot-review-log.md)
 
 ## CI
 
@@ -70,4 +68,4 @@ Pull requests use [.github/pull_request_template.md](.github/pull_request_templa
 
 ## Dependency Automation
 
-Dependabot is enabled through [.github/dependabot.yml](.github/dependabot.yml) to monitor npm, GitHub Actions, Docker base images, and Terraform dependency surfaces.
+Dependency automation is managed in the private workbench repository so public `main` stays clean and portfolio-ready.

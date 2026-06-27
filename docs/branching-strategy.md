@@ -7,7 +7,6 @@ This public repository is the polished portfolio output for the project.
 | Branch | Purpose |
 | --- | --- |
 | `main` | Stable, portfolio-ready branch shown to reviewers and recruiters |
-| `dependabot/*` | Automated dependency update branches targeting public `main` |
 
 ## Workflow
 
@@ -19,7 +18,7 @@ This public repository is the polished portfolio output for the project.
 
 ## Dependabot
 
-Dependabot targets public `main` in this repository. Active dependency experimentation can still happen in the private workbench before polished updates are promoted here.
+Dependabot and dependency experimentation are managed in the private workbench. Public `main` should stay focused on stable, reviewed portfolio output.
 
 ## Promotion Rule
 
