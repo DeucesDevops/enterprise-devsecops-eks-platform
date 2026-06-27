@@ -51,7 +51,7 @@ jobs:
             --exit-code 0
 
       - name: Upload Gitleaks report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gitleaks-report
           path: gitleaks-report.json
@@ -81,7 +81,7 @@ jobs:
             --output json > checkov-terraform-report.json || true
 
       - name: Upload Checkov Terraform report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checkov-terraform-report
           path: checkov-terraform-report.json
@@ -111,7 +111,7 @@ jobs:
             --output json > checkov-k8s-report.json || true
 
       - name: Upload Checkov Kubernetes report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checkov-k8s-report
           path: checkov-k8s-report.json
@@ -141,7 +141,7 @@ jobs:
             --output json > checkov-dockerfile-report.json || true
 
       - name: Upload Checkov Dockerfile report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: checkov-dockerfile-report
           path: checkov-dockerfile-report.json
@@ -185,14 +185,14 @@ jobs:
             --exit-code 0 > client-trivy-fs-report.txt
 
       - name: Upload Client Trivy JSON report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: client-trivy-fs-json-report
           path: client-trivy-fs-report.json
           if-no-files-found: warn
 
       - name: Upload Client Trivy TABLE report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: client-trivy-fs-table-report
           path: client-trivy-fs-report.txt
@@ -236,14 +236,14 @@ jobs:
             --exit-code 0 > server-trivy-fs-report.txt
 
       - name: Upload Server Trivy JSON report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: server-trivy-fs-json-report
           path: server-trivy-fs-report.json
           if-no-files-found: warn
 
       - name: Upload Server Trivy TABLE report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: server-trivy-fs-table-report
           path: server-trivy-fs-report.txt
@@ -373,7 +373,7 @@ jobs:
 
       - name: Upload SonarQube skip report
         if: env.SONAR_TOKEN == '' || env.SONAR_HOST_URL == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sonarqube-skip-report
           path: sonarqube-skipped.txt
@@ -399,7 +399,7 @@ jobs:
         run: npm run build:client
 
       - name: Upload client build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: client-build
           path: dist/client
@@ -483,14 +483,14 @@ jobs:
             --exit-code 0 > image-trivy-${{ matrix.service }}-report.txt
 
       - name: Upload Trivy image JSON report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: image-trivy-${{ matrix.service }}-json-report
           path: image-trivy-${{ matrix.service }}-report.json
           if-no-files-found: warn
 
       - name: Upload Trivy image TABLE report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: image-trivy-${{ matrix.service }}-table-report
           path: image-trivy-${{ matrix.service }}-report.txt
@@ -573,7 +573,7 @@ jobs:
 
       - name: Upload skipped deployment report
         if: env.AWS_ROLE_TO_ASSUME == ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qa-deployment-skipped
           path: qa-deployment-skipped.txt
