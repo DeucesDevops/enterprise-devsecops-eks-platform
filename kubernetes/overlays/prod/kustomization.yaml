@@ -1,0 +1,19 @@
+namespace: devsecops-commerce-prod
+
+resources:
+  - ../../base
+
+images:
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/frontend
+    newTag: prod-placeholder
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/user-service
+    newTag: prod-placeholder
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/product-service
+    newTag: prod-placeholder
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/order-service
+    newTag: prod-placeholder
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/payment-service
+    newTag: prod-placeholder
+  - name: ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/notification-service
+    newTag: prod-placeholder
+

@@ -1,0 +1,46 @@
+services:
+  frontend:
+    build: ./apps/frontend
+    ports:
+      - "3000:3000"
+    environment:
+      USER_SERVICE_URL: http://user-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      ORDER_SERVICE_URL: http://order-service:3003
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "3001:3001"
+
+  product-service:
+    build: ./services/product-service
+    ports:
+      - "3002:3002"
+
+  order-service:
+    build: ./services/order-service
+    ports:
+      - "3003:3003"
+    environment:
+      PAYMENT_SERVICE_URL: http://payment-service:3004
+      NOTIFICATION_SERVICE_URL: http://notification-service:3005
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      USER_SERVICE_URL: http://user-service:3001
+    depends_on:
+      - payment-service
+      - notification-service
+
+  payment-service:
+    build: ./services/payment-service
+    ports:
+      - "3004:3004"
+
+  notification-service:
+    build: ./services/notification-service
+    ports:
+      - "3005:3005"

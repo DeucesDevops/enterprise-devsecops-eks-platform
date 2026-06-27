@@ -1,0 +1,16 @@
+{
+  "name": "enterprise-devsecops-eks-platform",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Mini e-commerce platform for a DevSecOps portfolio project.",
+  "scripts": {
+    "lint": "node scripts/validate-services.js",
+    "lint:client": "node --check apps/frontend/server.js",
+    "lint:server": "node scripts/validate-services.js",
+    "test": "node scripts/smoke-test.js",
+    "test:client": "node --check apps/frontend/server.js",
+    "test:server": "node scripts/smoke-test.js",
+    "test:contracts": "node scripts/smoke-test.js",
+    "build:client": "mkdir -p dist/client && cp apps/frontend/server.js dist/client/server.js"
+  }
+}
