@@ -1,6 +1,6 @@
 # CI/CD Pipeline
 
-This project uses a QA-first DevSecOps delivery flow in the private workbench repository, then publishes stable output to this public portfolio repository.
+This project uses a QA-first DevSecOps delivery flow in the private workbench repository, then publishes stable output to this public portfolio repository. The public repository also runs a main-branch showcase pipeline so reviewers can see the CI/CD stages directly.
 
 ## Branch Flow
 
@@ -14,7 +14,7 @@ Development work is committed to the private workbench `qa` branch. CI/CD runs t
 
 ## QA Pipeline
 
-The QA pipeline is implemented from:
+The public pipeline is implemented from:
 
 ```text
 .github/workflows/qa-cicd.yml
@@ -27,11 +27,11 @@ The flow mirrors the requested enterprise QA pipeline while using this repositor
 - `kubernetes/overlays/qa` is the QA manifest target.
 - `ghcr.io/deucesdevops/enterprise-devsecops-eks-platform/*` is the image namespace.
 
-Current QA stages:
+Current public stages:
 
 ```mermaid
 flowchart TB
-  START["Push to qa"] --> GITLEAKS["Gitleaks Scan"]
+  START["Push to public main"] --> GITLEAKS["Gitleaks Scan"]
   GITLEAKS --> CHECKOV_TF["Checkov Terraform Scan"]
   GITLEAKS --> CHECKOV_K8S["Checkov Kubernetes Scan"]
   GITLEAKS --> CHECKOV_DOCKER["Checkov Dockerfile Scan"]
@@ -51,9 +51,8 @@ flowchart TB
   SERVER_TEST --> SONAR
   CLIENT_TEST --> CLIENT_BUILD["Client Build"]
   SONAR --> CLIENT_BUILD
-  CLIENT_BUILD --> DOCKER["Docker Build, Scan, SBOM & Push"]
-  DOCKER --> MANIFEST["Update QA Manifest"]
-  MANIFEST --> DEPLOY["Deploy to Kubernetes"]
+  CLIENT_BUILD --> DOCKER["Docker Build, Scan & SBOM"]
+  DOCKER --> READY["Portfolio Delivery Readiness"]
 ```
 
 ## Current Security Behavior
@@ -77,13 +76,11 @@ The next hardening step is to convert high-confidence scan findings into blockin
 - Docker image build matrix for all six runtime images
 - Trivy image reports in JSON and table formats
 - Source and image SBOM generation
-- Push to GHCR with SHA and `latest` tags
-- Automatic QA manifest image tag update
-- Conditional EKS QA deployment
+- Portfolio delivery readiness artifact
 
 ## Required Repository Configuration
 
-The pipeline can build, scan, publish GHCR packages, and update manifests with the default `GITHUB_TOKEN`. These deployment features require additional setup:
+The public pipeline can build, scan, and generate SBOM artifacts without cloud credentials. The private workbench pipeline handles mutable deployment steps. These deployment features require additional setup:
 
 - `SONAR_TOKEN` secret and `SONAR_HOST_URL` secret for SonarQube.
 - `AWS_ROLE_TO_ASSUME` secret for GitHub OIDC deployment to EKS.

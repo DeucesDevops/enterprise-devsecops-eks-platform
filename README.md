@@ -58,7 +58,7 @@ See:
 
 GitHub Actions validates the repository structure on pushes and pull requests using [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
-The private QA DevSecOps pipeline is implemented in [.github/workflows/qa-cicd.yml](.github/workflows/qa-cicd.yml) and includes secret scanning, split Checkov scans, client/server Trivy filesystem scans, linting, tests, SonarQube, Docker builds, image scans, SBOM generation, GHCR image push, QA manifest updates, and conditional EKS deployment.
+The public DevSecOps pipeline runs from [.github/workflows/qa-cicd.yml](.github/workflows/qa-cicd.yml) on `main` and demonstrates secret scanning, split Checkov scans, client/server Trivy filesystem scans, linting, tests, SonarQube readiness, Docker builds, image scans, SBOM generation, and portfolio delivery readiness.
 
 ## Branching Strategy
 
